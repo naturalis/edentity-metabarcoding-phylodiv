@@ -1,0 +1,51 @@
+# QIIME 2 Phylogenetic Placement Workflow Configuration
+
+# Input/Output paths
+input:
+  sequences: "path/to/input/sequences.qza"
+  sample_metadata: "path/to/sample_metadata.tsv"
+  reference_tree: "resources/reference_trees/bactria_reference_tree.nwk"
+  reference_alignment: "resources/reference_alignments/bactria_reference_alignment.fasta"
+  
+  bold:
+    filename: "BOLD_Public.08-Nov-2024.tsv"  # Just the filename
+    filter:
+      order: "Lepidoptera"  # Default order to filter
+
+output_dir: "results"
+
+# QIIME 2 parameters
+qiime2:
+  denoise_method: "dada2"
+  dada2:
+    trunc_len: 150
+    trim_left: 0
+  feature_classifier:
+    method: "vsearch"
+    reference_reads: "path/to/reference/reads.qza"
+    reference_taxonomy: "path/to/reference/taxonomy.qza"
+
+# Alignment and phylogenetic placement
+alignment:
+  method: "mafft"
+  hmm_file: "resources/hmm_models/COI-5P.hmm"
+
+placement:
+  method: "sepp"
+  alignment_subset_size: 1000
+  placement_subset_size: 5000
+
+# Diversity analysis
+diversity:
+  metrics:
+    - "faith_pd"
+    - "weighted_unifrac"
+    - "unweighted_unifrac"
+  sampling_depth: 10000
+
+# Computational resources
+cores: 4
+max_memory: "16GB"
+
+# Logging
+log_level: "INFO"
