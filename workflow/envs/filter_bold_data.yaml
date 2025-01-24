@@ -1,0 +1,9 @@
+name: filter_bold_data
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - pip
+  - pip:
+    - -r ../../workflow/envs/filter_bold_data.txt

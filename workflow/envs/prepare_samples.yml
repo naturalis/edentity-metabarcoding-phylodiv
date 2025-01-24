@@ -1,0 +1,13 @@
+name: prepare_samples
+channels:
+  - qiime2
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8
+  - qiime2=2024.2
+  - q2-types
+  - pip
+  - pip:
+    - -r ../../workflow/envs/prepare_samples.txt

@@ -1,0 +1,13 @@
+name: blast_filter
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8
+  - blast
+  - biopython
+  - pandas
+  - pip
+  - pip:
+    - -r ../../workflow/envs/blast_filter.txt

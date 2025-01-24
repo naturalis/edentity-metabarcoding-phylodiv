@@ -1,0 +1,106 @@
+configfile: "config/config.yaml"
+
+rule all:
+    input:
+        bold_subset = config["file_paths"]["bold_output"],
+        table = expand("results/qiime2/denoise/table_{method}.qza", 
+                      method=config["denoise_method"]),
+        rep_seqs = expand("results/qiime2/denoise/rep_seqs_{method}.qza", 
+                         method=config["denoise_method"]),
+        stats = expand("results/qiime2/denoise/stats_{method}.qza", 
+                      method=config["denoise_method"])
+
+rule filter_bold_data:
+    input:
+        config["file_paths"]["bold_input"]
+    output:
+        config["file_paths"]["bold_output"]
+    params:
+        filter_level = config["fasta_filter"]["filter_level"],
+        filter_name = config["fasta_filter"]["filter_name"],
+        log_level = config["log_level"]
+    conda:
+        "envs/filter_bold_data.yml"
+    log:
+        "logs/filter_bold_data/filter_bold_data.log"
+    shell:
+        """
+        python workflow/scripts/filter_bold_data.py \
+            -i {input} \
+            -o {output} \
+            -r {params.filter_name} \
+            -v {params.log_level} 2> {log}
+        """
+
+rule prepare_sequences:
+    input:
+        directory(config["file_paths"]["raw_sequences"])
+    output:
+        qza = "results/qiime2/demux/{dataset_name}_paired_end_demux.qza"
+    params:
+        dataset_name = config["dataset_name"],
+        log_level = config["log_level"],
+        output_dir = "results/qiime2/demux"
+    conda:
+        "envs/prepare_sequences.yml"
+    log:
+        "logs/prepare_sequences/prepare_sequences.log"
+    shell:
+        """
+        python workflow/scripts/prepare_sequences.py \
+            -i {input} \
+            -o {params.output_dir} \
+            -n {params.dataset_name} \
+            -v {params.log_level} 2> {log}
+        """
+
+rule denoise_sequences:
+    input:
+        "results/qiime2/demux/{dataset_name}_paired_end_demux.qza"
+    output:
+        table = "results/qiime2/denoise/table_{method}.qza",
+        rep_seqs = "results/qiime2/denoise/rep_seqs_{method}.qza",
+        stats = "results/qiime2/denoise/stats_{method}.qza"
+    params:
+        method = config["denoise_method"],
+        log_level = config["log_level"],
+        method_params = lambda wildcards: config[f"{wildcards.method}_params"]
+    conda:
+        "envs/denoise_sequences.yml"
+    log:
+        "logs/denoise_sequences/denoise_sequences_{method}.log"
+    shell:
+        """
+        python workflow/scripts/denoise_sequences.py \
+            -i {input} \
+            -o results/qiime2/denoise \
+            -m {params.method} \
+            -p '{params.method_params}' \
+            -v {params.log_level} 2> {log}
+        """
+
+rule blast_filter:
+    input:
+        sequences = "results/qiime2/denoise/rep_seqs_{method}.qza",
+        reference = config["file_paths"]["bold_output"]
+    output:
+        filtered = "results/blast/filtered_sequences.fasta",
+        ref_ids = "results/blast/reference_ids.txt"
+    params:
+        min_identity = config["blast_params"]["min_identity"],
+        min_coverage = config["blast_params"]["min_coverage"],
+        log_level = config["log_level"]
+    conda:
+        "envs/blast_filter.yml"
+    log:
+        "logs/blast_filter/blast_filter.log"
+    shell:
+        """
+        python workflow/scripts/blast_filter.py \
+            -i {input.sequences} \
+            -r {input.reference} \
+            -o results/blast \
+            --min_identity {params.min_identity} \
+            --min_coverage {params.min_coverage} \
+            -v {params.log_level} 2> {log}
+        """

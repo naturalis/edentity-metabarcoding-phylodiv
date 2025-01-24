@@ -1,0 +1,11 @@
+name: prune_tree
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8
+  - biopython
+  - pip
+  - pip:
+    - -r ../../workflow/envs/prune_tree.txt

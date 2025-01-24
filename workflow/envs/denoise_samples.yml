@@ -1,0 +1,9 @@
+name: denoise_sequences
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - pip
+  - pip:
+    - -r ../../workflow/envs/denoise_sequences.txt

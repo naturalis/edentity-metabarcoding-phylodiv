@@ -1,0 +1,12 @@
+name: sequence_alignment
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8
+  - biopython
+  - hmmer
+  - pip
+  - pip:
+    - -r ../../workflow/envs/sequence_alignment.txt

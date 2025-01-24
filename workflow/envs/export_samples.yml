@@ -1,0 +1,14 @@
+name: export_sequences
+channels:
+  - qiime2
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8
+  - qiime2=2024.2
+  - q2-types
+  - pandas
+  - pip
+  - pip:
+    - -r ../../workflow/envs/export_sequences.txt
