@@ -1,0 +1,82 @@
+IMPORTANT WARNING: Alignment column 1 contains only undetermined values which will be treated as missing data
+
+
+IMPORTANT WARNING: Sequences BLPAA15180-19 and BLPDF4928-19 are exactly identical
+
+IMPORTANT WARNING
+Found 1 sequence that is exactly identical to other sequences in the alignment.
+Normally they should be excluded from the analysis.
+
+
+IMPORTANT WARNING
+Found 1 column that contains only undetermined values which will be treated as missing data.
+Normally these columns should be excluded from the analysis.
+
+An alignment file with undetermined columns and sequence duplicates removed has already
+been printed to file /home/joppew/qiime2-phylogenetic-placement/results/pplacer/output_directory/reference_alignment.phy.reduced
+
+
+This is RAxML version 7.2.6 released by Alexandros Stamatakis in February 2010.
+
+With greatly appreciated code contributions by:
+Andre Aberer (TUM)
+Simon Berger (TUM)
+John Cazes (TACC)
+Michael Ott (TUM)
+Nick Pattengale (UNM)
+Wayne Pfeiffer (SDSC)
+
+
+Alignment has 408 distinct alignment patterns
+
+Proportion of gaps and completely undetermined characters in this alignment: 0.16%
+
+RAxML Model Optimization up to an accuracy of 0.100000 log likelihood units
+
+Using 1 distinct models/data partitions with joint branch length optimization
+
+
+All free model parameters will be estimated by RAxML
+GAMMA model of rate heteorgeneity, ML estimate of alpha-parameter
+
+GAMMA Model parameters will be estimated up to an accuracy of 0.1000000000 Log Likelihood units
+
+Partition: 0
+Alignment Patterns: 408
+Name: No Name Provided
+DataType: DNA
+Substitution Matrix: GTR
+
+
+
+
+RAxML was called as follows:
+
+/home/joppew/software/raxml/RAxML-7.2.6/raxmlHPC-PTHREADS -T 4 -f e -t /home/joppew/qiime2-phylogenetic-placement/results/trees/pruned_reference_tree.nwk -s /home/joppew/qiime2-phylogenetic-placement/results/pplacer/output_directory/reference_alignment.phy -m GTRGAMMA -n stats -w /home/joppew/qiime2-phylogenetic-placement/results/pplacer/output_directory -p 12345 
+
+
+
+
+Overall Time for Tree Evaluation 1619.830351
+Final GAMMA  likelihood: {likelihood}
+Number of free parameters for AIC-TEST(BR-LEN): 7948
+Number of free parameters for AIC-TEST(NO-BR-LEN): 9
+
+
+Model Parameters of Partition 0, Name: No Name Provided, Type of Data: DNA
+alpha: {alpha}
+Tree-Length: {tree_length}
+rate A <-> C: {rate_ac}
+rate A <-> G: {rate_ag}
+rate A <-> T: {rate_at}
+rate C <-> G: {rate_cg}
+rate C <-> T: {rate_ct}
+rate G <-> T: {rate_gt}
+
+freq pi(A): {freq_a}
+freq pi(C): {freq_c}
+freq pi(G): {freq_g}
+freq pi(T): {freq_t}
+
+Final tree written to:                 /home/joppew/qiime2-phylogenetic-placement/results/pplacer/output_directoryRAxML_result.stats
+Execution Log File written to:         /home/joppew/qiime2-phylogenetic-placement/results/pplacer/output_directoryRAxML_log.stats
