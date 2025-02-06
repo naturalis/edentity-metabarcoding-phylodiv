@@ -1,0 +1,15 @@
+name: phylogenetic_placement
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8
+  - biopython
+  - pplacer
+  - hmmer
+  - raxml
+  - yaml
+  - pip
+  - pip:
+    - -r ../../workflow/envs/phylogenetic_placement.txt

@@ -4,10 +4,44 @@ import argparse
 from pathlib import Path
 import subprocess
 import sys
+from Bio import AlignIO
+
+def extract_reference_ids_from_stockholm(stockholm_file, output_file, logger):
+    """
+    Extract reference sequence IDs from Stockholm alignment file.
+    
+    Parameters:
+    :param stockholm_file: Path to Stockholm alignment file
+    :param output_file: Path to write reference IDs
+    :param logger: Logger instance
+    
+    Returns:
+    :return: Set of reference IDs and path to output file
+    """
+    try:
+        # Read Stockholm alignment
+        logger.info(f"Reading Stockholm alignment from {stockholm_file}")
+        alignment = AlignIO.read(stockholm_file, "stockholm")
+        
+        # Extract unique sequence IDs
+        ref_ids = set(record.id for record in alignment)
+        logger.info(f"Found {len(ref_ids)} unique reference IDs")
+        
+        # Write IDs to file
+        with open(output_file, 'w') as f:
+            for ref_id in sorted(ref_ids):
+                f.write(f"{ref_id}\n")
+        logger.info(f"Wrote reference IDs to {output_file}")
+        
+        return ref_ids, output_file
+        
+    except Exception as e:
+        logger.error(f"Error extracting reference IDs: {str(e)}")
+        raise
 
 def load_reference_ids(ref_ids_file, logger):
     """
-    Load reference IDs from BLAST filtering results.
+    Load reference IDs from file.
     
     Parameters:
     :param ref_ids_file: Path to file containing reference IDs
@@ -84,11 +118,10 @@ def extract_subtree(db_path, ref_ids_file, output_file, logger):
         logger.error(f"Error extracting subtree: {str(e)}")
         raise
 
-
 def main():
-    parser = argparse.ArgumentParser(description='Extract subtree based on BLAST results.')
+    parser = argparse.ArgumentParser(description='Extract subtree based on reference IDs from Stockholm alignment.')
     parser.add_argument('-t', '--tree', required=True, help='Input reference tree file')
-    parser.add_argument('-r', '--ref_ids', required=True, help='Reference IDs from BLAST filtering')
+    parser.add_argument('-a', '--alignment', required=True, help='Stockholm alignment file')
     parser.add_argument('-o', '--output_dir', required=True, help='Output directory')
     parser.add_argument('-v', '--verbosity', required=True, help='Log level (e.g. DEBUG)')
     args = parser.parse_args()
@@ -99,12 +132,23 @@ def main():
         output_dir = Path(args.output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
         
+        # Extract reference IDs from Stockholm file
+        ref_ids_file = output_dir / "reference_ids.txt"
+        _, ref_ids_file = extract_reference_ids_from_stockholm(
+            Path(args.alignment),
+            ref_ids_file,
+            logger
+        )
+        
         # Initialize tree database
         db_path = initialize_database(Path(args.tree), output_dir, logger)
         
         # Extract subtree
         output_tree = output_dir / "pruned_reference_tree.tre"
-        extract_subtree(db_path, Path(args.ref_ids), output_tree, logger)
+        extract_subtree(db_path, ref_ids_file, output_tree, logger)
+        
+        # Clean up temporary files
+        db_path.unlink()
         
         logger.info("Tree pruning completed successfully")
         

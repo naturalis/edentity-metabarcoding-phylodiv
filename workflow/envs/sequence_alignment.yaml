@@ -1,12 +1,14 @@
-name: sequence_alignment
+name: graft_samples
 channels:
   - conda-forge
   - bioconda
   - defaults
 dependencies:
   - python=3.8
+  - pplacer  # Provides guppy and phyloxml_converter
   - biopython
-  - hmmer
+  - pandas
   - pip
   - pip:
-    - -r ../../workflow/envs/sequence_alignment.txt
+    - dendropy  # Additional tree manipulation library
+    - phylotree  # Tree format conversion utilities

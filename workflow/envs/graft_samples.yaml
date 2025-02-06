@@ -1,0 +1,14 @@
+name: graft_samples
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.8
+  - pplacer
+  - biopython
+  - pandas
+  - numpy
+  - pip
+  - pip:
+    - -r ../../workflow/envs/graft_samples.txt
