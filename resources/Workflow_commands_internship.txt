@@ -1,0 +1,51 @@
+filter_bold_data.py
+conda activate filter_bold_data
+
+python workflow/scripts/filter_bold_data.py -t resources/reference_trees/lepidoptera_reference_tree.tre -i resources/BOLD/BOLD_Public.08-Nov-2024.tsv -o results/sample_sequences -v DEBUG
+
+
+blast_filter.py
+conda activate blast_filter
+
+python workflow/scripts/blast_filter.py -i results/sample_sequences/geographical_samples.fasta -r results/sample_sequences/reference_sequences.fasta -o results/blast/ --max_evalue 1e-5 --threads 4 -v INFO
+
+
+alignment_stockholm.py
+conda activate envs/sequence_alignment
+
+python workflow/scripts/alignment_stockholm.py -i results/blast/reference_subset.fasta -m resources/hmm_models/COI-5P.hmm -f stockholm -o results/alignments/reference_alignment.sto --min-score 5.0 -v INFO
+
+python workflow/scripts/alignment_stockholm.py -i results/sample_sequences/geographical_samples.fasta -m resources/hmm_models/COI-5P.hmm -f stockholm -o results/alignments/geographical_samples_alignment.sto --min-score 0.00 -v INFO
+
+
+prune_tree.py
+conda activate prune_tree
+
+python workflow/scripts/prune_tree.py -t resources/reference_trees/lepidoptera_reference_tree.tre -a results/alignments/reference_alignment.sto  -o results/trees -v INFO
+
+
+create_stats_raxml.py
+conda activate phylogenetic_placement
+
+python workflow/scripts/create_stats_raxml.py -t results/trees/pruned_reference_tree.tre -s results/alignments/reference_alignment.sto -o results/RAxML --template resources/raxml_template/raxml_template.txt --subsample 1000 --n-subsets 3 --threads 4
+
+
+pplacer.py
+python workflow/scripts/pplacer.py -t results/trees/pruned_reference_tree.tre -s results/RAxML/RAxML_info_formatted.stats -r results/alignments/reference_alignment.sto -q results/alignments/geographical_samples_alignment.sto -o results/pplacer
+
+
+graft_samples.py
+conda activate graft_samples
+python workflow/scripts/graft_samples.py -i results/pplacer/placements.jplace -o results/trees -v DEBUG
+
+
+metadatabuilder.py
+python workflow/scripts/metadata_builder.py results/sample_sequences/feature_table.tsv results/qiime2/
+
+
+import_data.py
+python workflow/scripts/import_data.py   -i results/sample_sequences/feature_table.tsv   -t results/trees/grafted_tree.nwk   -o results/qiime2/   --rooted
+
+
+QIIME2 command
+qiime diversity core-metrics-phylogenetic   --i-phylogeny results/qiime2/tree.qza   --i-table results/qiime2/feature-table.qza --p-sampling-depth 100 --m-metadata-file results/qiime2/sample-metadata.tsv   --output-dir results/qiime2/PD_metrics/

@@ -1,0 +1,80 @@
+1. **filter_bold_data.py**
+   - Inputs:
+     - Reference tree (`lepidoptera_reference_tree.tre`)
+     - BOLD database TSV (`BOLD_Public.08-Nov-2024.tsv`)
+   - Outputs in `results/sample_sequences/`:
+     - `reference_sequences.fasta`: Reference sequences from BOLD
+     - `geographical_samples.fasta`: Geographically sampled sequences
+     - `feature_table.tsv`: Sample distribution table
+
+2. **blast_filter.py**
+   - Inputs:
+     - Query sequences (`geographical_samples.fasta`)
+     - Reference sequences (`reference_sequences.fasta`)
+   - Outputs in `results/blast/`:
+     - `blast_results.txt`: BLAST search results
+     - `filtered_sequences.fasta`: Filtered query sequences
+     - `reference_subset.fasta`: Matching reference sequences
+     - `reference_ids.txt`: List of reference IDs
+
+3. **alignment_stockholm.py** (Run twice)
+   First run:
+   - Inputs:
+     - Reference sequences (`reference_subset.fasta`)
+     - HMM model (`COI-5P.hmm`)
+   - Output:
+     - `results/alignments/reference_alignment.sto`
+
+   Second run:
+   - Inputs:
+     - Query sequences (`geographical_samples.fasta`)
+     - HMM model (`COI-5P.hmm`)
+   - Output:
+     - `results/alignments/geographical_samples_alignment.sto`
+
+4. **prune_tree.py**
+   - Inputs:
+     - Reference tree (`lepidoptera_reference_tree.tre`)
+     - Reference alignment (`reference_alignment.sto`)
+   - Output:
+     - `results/trees/pruned_reference_tree.tre`
+
+5. **create_stats_raxml.py**
+   - Inputs:
+     - Pruned tree (`pruned_reference_tree.tre`)
+     - Reference alignment (`reference_alignment.sto`)
+     - RAxML template (`raxml_template.txt`)
+   - Output:
+     - `results/RAxML/RAxML_info_formatted.stats`
+
+6. **pplacer.py**
+   - Inputs:
+     - Pruned tree (`pruned_reference_tree.tre`)
+     - RAxML stats (`RAxML_info_formatted.stats`)
+     - Reference alignment (`reference_alignment.sto`)
+     - Query alignment (`geographical_samples_alignment.sto`)
+   - Output:
+     - `results/pplacer/placements.jplace`
+
+7. **graft_samples.py**
+   - Input:
+     - Placement file (`placements.jplace`)
+   - Outputs in `results/trees/`:
+     - `grafted_tree.nwk`: Combined tree with all placements
+
+8. **metadata_builder.py** (DIT WAS NODIG DOORDAT IK NIET MET WERKELIJKE SAMPLES WERKTE)
+   - Input:
+     - Feature table TSV (`feature_table.tsv`)
+   - Outputs in specified output directory:
+     - `sample-metadata.tsv`: QIIME2 metadata file with sample information
+
+9. **import_data.py**
+   - Inputs:
+     - Feature table TSV
+     - Newick tree file
+   - Outputs in specified output directory:
+     - `feature-table.biom`: BIOM format feature table
+     - `feature-table.qza`: QIIME2 artifact of feature table
+     - `tree.qza`: QIIME2 artifact of phylogenetic tree
+
+10. **QIIME2 command**
