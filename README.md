@@ -20,10 +20,10 @@ This workflow uses Conda for dependency management. To set up the environment:
    cd qiime2-phylogenetic-placement
    ```
 
-2. Create and activate the Conda environment:
+2. At the moment environments are installed per script used:
    ```
-   conda env create -f workflow/envs/environment.yml
-   conda activate qiime2-phylo-placement
+   conda env create -f workflow/envs/script.yaml
+   conda activate script
    ```
 
 ## Usage
@@ -31,6 +31,8 @@ This workflow uses Conda for dependency management. To set up the environment:
 The workflow is managed using Snakemake. To run the entire pipeline:
 
 NOT YET IMPLEMENTED
+
+All scripts will need to be executed manually, for all commands and input files both Inputs_Outputs_Structure.txt & Workflow_commands_internship.txt can be used to find the necessary commands
 
 ## Configuration
 
